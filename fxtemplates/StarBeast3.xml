@@ -245,9 +245,15 @@ ClusterTree/clusterType//'>
         />
 		<mergepoint id='aux-sb3-clockmodel-panels'/>
 
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Species Clock Model" icon='4.png.x' tiptext="Species Clock model" path="init/sharedRateModel/branchRateModel" forceExpansion="TRUE"/>
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Species Clock Model" icon='4.png.x' tiptext="Species Clock model" path="init/sharedRateModel/morphBranchRateModel" forceExpansion="TRUE"/>
 		<mergepoint id='aux-sb3-clockmodel-panels'/>
-		
+
+
+<!--		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Morphology Clock Model" icon='4.png.x' tiptext="Species Clock model"-->
+<!--			   path="distribution/distribution[id='likelihood']/distribution[id='morphTreeLikelihood*']/branchRateModel"-->
+<!--			   forceExpansion="TRUE"/>-->
+<!--		<mergepoint id='aux-sb3-clockmodel-panels'/>-->
+
 
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="State" tiptext="Initial state" path="state/stateNode" hasPartitions="none" icon="6.pngx" forceExpansion="TRUE_START_COLLAPSED" isVisible="false"/>
 		<mergepoint id="aux-sb3-initilisation-panels"/>
@@ -462,16 +468,17 @@ ClusterTree/clusterType//'>
 			<mergepoint id="aux-sb3-partitiontemplate"/>
 		</partitiontemplate>
 
-		<alignmentProvider id="Add Morphology to Species Tree" spec='starbeast3.app.beauti.StarBeast3MorphModelAlignmentProvider' template='@StarBEASTMKTrait'/>
+		<alignmentProvider id="Add Morphology to Species Tree" spec='starbeast3.app.beauti.StarBeast3MorphModelAlignmentProvider' template='@StarBEAST3MKTrait'/>
 
-		<subtemplate id='StarBEASTMKTrait' class='beast.base.evolution.alignment.FilteredAlignment' mainid='$(n)'
+		<subtemplate id='StarBEAST3MKTrait' class='beast.base.evolution.alignment.FilteredAlignment' mainid='$(n)'
 					 suppressInputs = 'morphmodels.evolution.substitutionmodel.LewisMK.stateNumber,
 			morphmodels.evolution.substitutionmodel.LewisMK.datatype,
 			morphmodels.evolution.substitutionmodel.LewisMK.frequencies,
 			morphmodels.evolution.substitutionmodel.LewisMK.proportionInvariant'>
 
 			<![CDATA[
-			<stateNode id="strictClockRate.c:$(n)" spec="parameter.RealParameter" lower="0.0" value="1.0" estimate="false"/>
+			<stateNode id="strictClockRate.c:$(n)" spec="parameter.RealParameter" lower="0.0" value="1.0" estimate="true"/>
+
 
 			<distribution id="morphTreeLikelihood.$(n)" spec="TreeLikelihood" tree="@Tree.t:Species">
 				<data spec="beast.base.evolution.alignment.FilteredAlignment" id="$(n)" filter="0-end">
@@ -482,7 +489,7 @@ ClusterTree/clusterType//'>
 					<mutationRate spec="parameter.RealParameter" id="mutationRate.s:$(n)" value="1.0" estimate="false"/>
 					<shape spec="parameter.RealParameter" id="gammaShape.s:$(n)" value="1.0" estimate="false"/>
 				</siteModel>
-				<branchRateModel id="StrictClock.c:$(n)" spec="StrictClockModel" clock.rate="@strictClockRate.c:$(n)"/>
+				<branchRateModel id="StrictClock.c:$(n)" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3" clock.rate="@strictClockRate.c:$(n)"/>
 			</distribution>
 
 			<prior id="MutationRatePrior.s:$(n)" x="@mutationRate.s:$(n)">
@@ -516,9 +523,10 @@ ClusterTree/clusterType//'>
 			<connect srcID="gammaShape.s:$(n)" targetID="tracelog" inputName="log" if="inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true"/>
 			<connect srcID="strictClockRate.c:$(n)" targetID="tracelog" inputName="log" if="inlikelihood(strictClockRate.c:$(n)) and strictClockRate.c:$(n)/estimate=true"/>
 
+			<connect srcID="StrictClock.c:$(n)" targetID="sharedRateModel" inputName="morphBranchRateModel" if="inposterior(strictClockRate.c:$(n))"/>
+
 			<connect srcID="GammaShapePrior.s:$(n)" targetID="prior" inputName="distribution" if="inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true"/>
 
-			<connect srcID="strictClockRate.c:$(n)" targetID="updownAll:Species" inputName="up" if="inlikelihood(strictClockRate.c:$(n)) and strictClockRate.c:$(n)/estimate=true"/>
 		</subtemplate>
 
 		
@@ -541,6 +549,8 @@ ClusterTree/clusterType//'>
 </taxonset>
 
 <tree id="Tree.t:Species" spec="starbeast3.tree.SpeciesTree" taxonset="@taxonsuperset" estimate="true"/>
+
+
 
 
 <run chainLength="10000000" id="mcmc" spec="MCMC" storeEvery="50000">
@@ -754,10 +764,31 @@ ClusterTree/clusterType//'>
 				<branchRateModel id="strictClockModel.Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
 					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
 				</branchRateModel>
+
+				<morphBranchRateModel id="strictClockModel.Morph" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
+					<clock.rate id='SpeciesTreeStrictClockRate.c:$(n)' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
+				</morphBranchRateModel>
+
+<!--				<morphBranchRateModel idref="strictClockModel.Morph"/>-->
 				
 
 	
 		</sharedRateModel>
+
+<!--		<morphRateModel id="branchRatesModel.Morph" spec="starbeast3.evolution.branchratemodel.MorphSpeciesClockModel">-->
+
+
+<!--			-->
+
+
+
+<!--		</morphRateModel>-->
+
+
+
+
+
+
 				
 			
 

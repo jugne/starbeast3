@@ -20,6 +20,7 @@
     <service type="beast.base.core.BEASTInterface">
         <provider classname="starbeast3.app.beauti.StarBeastAlignmentProvider3"/>
         <provider classname="starbeast3.app.beauti.StarBeast3MorphModelAlignmentProvider"/>
+        <provider classname="starbeast3.evolution.branchratemodel.MorphSpeciesClockModel"/>
         <provider classname="starbeast3.simulation.DirectSimulator"/>
         <provider classname="starbeast3.core.MCMCsb3"/>
         <provider classname="starbeast3.core.OperatorScheduleRecalculator"/>

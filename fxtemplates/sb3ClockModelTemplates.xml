@@ -33,7 +33,7 @@
 			-->
 
 			<!-- Estimate clock rate? -->
-			<connect srcID="SpeciesTreeStrictClockRate" targetID="state" inputName="stateNode" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/> 
+			<connect srcID="SpeciesTreeStrictClockRate" targetID="state" inputName="stateNode" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/>
 			<connect srcID="SB3StrictClockPrior" targetID="prior" inputName="distribution" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true">
 				Prior on species tree strict clock rate
 			</connect>
